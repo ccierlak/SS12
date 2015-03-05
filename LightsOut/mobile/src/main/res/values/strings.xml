@@ -7,7 +7,7 @@
     <string name="title_activity_in_game">Single Player</string>
     <string name="app_id">833329809033</string>
     <string name="leaderboard_high_score">CgkIiY3PsqAYEAIQAw</string>
-    <string name="title_activity_multiplayer">MultiplayerGame</string>
+    <string name="title_activity_game_modes">Game Modes</string>
     <string name="signing_in">Signing in with Google</string>
     <string name="signing_out">Signing out</string>
     <string name="game_title">Button Clicker 2000!</string>

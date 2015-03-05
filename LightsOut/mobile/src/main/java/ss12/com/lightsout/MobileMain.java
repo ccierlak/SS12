@@ -3,18 +3,15 @@ package ss12.com.lightsout;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
-import com.google.example.games.basegameutils.BaseGameActivity;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.Plus;
@@ -23,44 +20,44 @@ import com.google.android.gms.wearable.Wearable;
 public class MobileMain extends Activity implements GoogleApiClient.ConnectionCallbacks,
         View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
+
+    private boolean mSignInClicked=false;
+    private  ConnectionResult mConnectionResult;
+    private boolean mIntentInProgress;
+    private int RC_SIGN_IN=0;
     private GoogleApiClient mGoogleApiClient;
     private final String TAG="mobile main";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_button);
+        setContentView(R.layout.splash_screen);
         createGoogleApiClient();
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+
         findViewById(R.id.sign_in).setOnClickListener(this);
-        Button button = (Button) findViewById(R.id.fight);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            Intent intent=new Intent(getApplicationContext(),MultiplayerGame.class);
-                startActivity(intent);
-            }
-        });
-        Button leaderboards = (Button) findViewById(R.id.leaderboards);
-        leaderboards.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGoogleApiClient,
-                        getResources().getString(R.string.leaderboard_high_score)), 0);
-            }
-        });
+
+        //set up button for going into game modes
+        findViewById(R.id.fight).setOnClickListener(this);
+
+        //set up button for going into leaderboards
+        findViewById(R.id.leaderboards).setOnClickListener(this);
+
     }
+
 
     @Override
     protected void onStop() {
         super.onStop();
     }
 
+
+    //this gets called on start, builds the GoogleAPIClient with proper api's and connects to it
     private void createGoogleApiClient(){
         //Basic Google Api Client build
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -71,6 +68,7 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .build();
+        mGoogleApiClient.connect();
         Toast.makeText(this,"Google Api Client Built",Toast.LENGTH_LONG).show();
 
     }
@@ -95,12 +93,19 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
 
         return super.onOptionsItemSelected(item);
     }
+
+    //on connected callback for GoogleAPIClient
+    @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "onConnected: " + bundle);
-        Toast.makeText(this,"Google Api Client Connected",Toast.LENGTH_LONG).show();
+
+        //removes Google+ sign in if the user is already signed in
+        findViewById(R.id.sign_in).setVisibility(View.GONE);
+        Toast.makeText(this, "Google Api Client Connected", Toast.LENGTH_LONG).show();
 
     }
 
+    //on suspended callback for GoogleAPIClient
     @Override
     public void onConnectionSuspended(int cause) {
         Log.d(TAG, "onConnectionSuspended: " + cause);
@@ -108,19 +113,7 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
 
     }
 
-    @Override
-    public void onClick(View v) {
-        signInWithGplus();
-    }
-
-    /**
-     * Sign-in into google
-     * */
-
-    boolean mSignInClicked=false;
-    ConnectionResult mConnectionResult;
-    boolean mIntentInProgress;
-    int RC_SIGN_IN=0;
+    //Google+ sign in
     private void signInWithGplus() {
         if (!mGoogleApiClient.isConnecting()) {
             mSignInClicked = true;
@@ -128,9 +121,8 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
         }
     }
 
-    /**
-     * Method to resolve any signin errors
-     * */
+
+    //resolve Google+ sign in errors
     private void resolveSignInError() {
         if (mConnectionResult.hasResolution()) {
             try {
@@ -179,4 +171,24 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
             }
         }
     }
+
+    //on click listeners
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.sign_in){
+            signInWithGplus();
+        }
+        else if(v.getId() == R.id.leaderboards){
+            startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGoogleApiClient,
+                    getResources().getString(R.string.leaderboard_high_score)), 0);
+        }
+        else if(v.getId() == R.id.fight){
+            Intent intent=new Intent(getApplicationContext(),GameModes.class);
+            startActivity(intent);
+        }
+        else{
+            //no button defined in code is pressed
+        }
+    }
+
 }

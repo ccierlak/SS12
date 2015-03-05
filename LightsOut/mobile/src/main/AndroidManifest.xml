@@ -36,8 +36,8 @@
             android:label="@string/title_activity_in_game" >
         </activity>
         <activity
-            android:name=".MultiplayerGame"
-            android:label="@string/title_activity_multiplayer" >
+            android:name=".GameModes"
+            android:label="@string/title_activity_game_modes" >
         </activity>
     </application>
 
