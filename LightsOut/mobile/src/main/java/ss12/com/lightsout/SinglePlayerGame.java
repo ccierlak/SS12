@@ -106,8 +106,8 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 break;
             case 1://counter
                 vibrator.vibrate(new long[]{0, 400, 0, 0, 0, 0, 400, 0 , 0, 0, 0, 500}, -1);
-                textToSpeech.speak("Counter", TextToSpeech.QUEUE_FLUSH, null);
-                Toast.makeText(getApplicationContext(), "Counter", Toast.LENGTH_SHORT).show();
+                textToSpeech.speak("Block", TextToSpeech.QUEUE_FLUSH, null);
+                Toast.makeText(getApplicationContext(), "Block", Toast.LENGTH_SHORT).show();
                 break;
             case 2: //push
                 vibrator.vibrate(new long[]{0, 400, 0, 0, 0, 0, 400,0 , 0, 0, 0, 400, 0 , 0 , 0, 500}, -1);
