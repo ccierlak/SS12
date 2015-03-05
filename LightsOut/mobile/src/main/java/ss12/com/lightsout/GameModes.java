@@ -3,12 +3,9 @@ package ss12.com.lightsout;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -38,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class MultiplayerGame extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+public class GameModes extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener, RealTimeMessageReceivedListener,
         RoomStatusUpdateListener, RoomUpdateListener, OnInvitationReceivedListener {
 
@@ -93,7 +90,7 @@ private boolean mAutoStartSignInFlow = true;
 @Override
 public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_multiplayer);
+        setContentView(R.layout.activity_game_modes);
 
         // Create the Google Api Client with access to Plus and Games
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -612,7 +609,12 @@ final static int GAME_DURATION = 20; // game duration, seconds.
 
         // Start the gameplay phase of the game.
         void startGame(boolean multiplayer) {
-        mMultiplayer = multiplayer;
+            if(!multiplayer)
+            {
+                Intent intent = new Intent(this,SinglePlayerGame.class);
+                startActivity(intent);
+            }
+       /* mMultiplayer = multiplayer;
         updateScoreDisplay();
         broadcastScore(false);
         switchToScreen(R.id.screen_game);
@@ -629,7 +631,7 @@ public void run() {
         gameTick();
         h.postDelayed(this, 1000);
         }
-        }, 1000);
+        }, 1000);*/
         }
 
         // Game tick -- update countdown, check if game ended.

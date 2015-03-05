@@ -1,5 +1,6 @@
 package ss12.com.lightsout;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -29,7 +30,7 @@ import java.util.Random;
 
 //this class is the single player game activity and controls all
 // single player game logic on the ui thread
-public class SinglePlayerGame extends ActionBarActivity implements MessageApi.MessageListener,
+public class SinglePlayerGame extends Activity implements MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
     private final String TAG = "Single Player Mobile";
     private GoogleApiClient mGoogleApiClient;
