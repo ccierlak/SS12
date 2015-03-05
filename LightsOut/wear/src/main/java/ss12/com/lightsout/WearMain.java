@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 import android.widget.TextView;
+import com.google.example.games.basegameutils.BaseGameUtils;
+
 
 public class WearMain extends Activity {
 

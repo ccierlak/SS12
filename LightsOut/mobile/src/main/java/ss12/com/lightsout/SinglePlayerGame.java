@@ -12,9 +12,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.google.example.games.basegameutils.BaseGameUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -163,6 +164,7 @@ public class SinglePlayerGame extends ActionBarActivity implements MessageApi.Me
                 })
                         // adding only the wearable API
                 .addApi(Wearable.API)
+                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
     }
