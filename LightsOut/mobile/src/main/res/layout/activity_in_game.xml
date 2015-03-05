@@ -7,9 +7,9 @@
     tools:context="ss12.com.lightsout.SinglePlayerGame"
     android:background="#000000">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
+    <TextView android:text="Starting Game" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/text"
+        android:id="@+id/text2"
         android:textColor="#ffe3e8de"
         android:textStyle="bold|italic"
         android:typeface="serif"
@@ -20,15 +20,9 @@
         android:background="@drawable/custom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text"
         android:text = "Make'a'Move"
         android:textSize="25sp"
         android:id="@+id/button"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button"
-        android:id="@+id/text2"/>
 
 </RelativeLayout>
