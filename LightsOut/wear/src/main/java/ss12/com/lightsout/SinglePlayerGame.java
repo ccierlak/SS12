@@ -18,10 +18,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.games.Games;
-import com.google.example.games.basegameutils.BaseGameUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -196,7 +195,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             timeLimit -= rand.nextInt(1000);
         }
         Message msg = mHandler.obtainMessage(action,this);
-        //mHandler.sendMessageDelayed(msg, timeLimit);
+        mHandler.sendMessageDelayed(msg, timeLimit);
 
 
     }
@@ -309,7 +308,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             public void run() {
                 Log.d("Wearable", "message received");
                 actionGiven(actionVibration);
-             //   Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+           //   Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
                 startRound(Integer.parseInt(message));
             }
         });
