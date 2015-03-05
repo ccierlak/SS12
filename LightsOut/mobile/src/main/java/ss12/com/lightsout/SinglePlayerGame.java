@@ -111,8 +111,8 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 break;
             case 2: //push
                 vibrator.vibrate(new long[]{0, 400, 0, 0, 0, 0, 400,0 , 0, 0, 0, 400, 0 , 0 , 0, 500}, -1);
-                textToSpeech.speak("Push",TextToSpeech.QUEUE_FLUSH,null);
-                Toast.makeText(getApplicationContext(), "Push", Toast.LENGTH_SHORT).show();
+                textToSpeech.speak("Rush",TextToSpeech.QUEUE_FLUSH,null);
+                Toast.makeText(getApplicationContext(), "Rush", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
