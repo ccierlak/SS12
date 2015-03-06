@@ -20,23 +20,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
-=======
+
         <activity android:name=".VoiceCommand" android:label="Lights">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
->>>>>>> d2ff99b34470639f5bed8eec56e8e45886812899
         <activity
             android:name=".SinglePlayerGame"
             android:label="@string/title_activity_single_player_game" >
         </activity>
-        <activity
-            android:name=".SensorFusion"
-            android:label="@string/title_activity_sensor_fusion" >
-        </activity>
+
     </application>
 
 </manifest>

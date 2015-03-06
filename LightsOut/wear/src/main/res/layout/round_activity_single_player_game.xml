@@ -23,14 +23,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/refresh"
         android:text="refresh"
-        android:layout_above="@+id/swap"
-        android:layout_alignStart="@+id/swap" />
+        android:layout_below="@+id/compare"
+        android:layout_centerHorizontal="true"
+/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/swap"
-        android:text="switch"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
 </RelativeLayout>
