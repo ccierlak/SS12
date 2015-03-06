@@ -5,20 +5,32 @@
     tools:deviceIds="wear_round">
 
     <TextView android:id="@+id/text" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" android:text="this should change" />
+        android:layout_height="wrap_content"
+        android:text="this should change"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/compare"
+        android:layout_below="@+id/text"
+        android:layout_centerHorizontal="true"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/refresh"
         android:text="refresh"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/text"/>
+        android:layout_above="@+id/swap"
+        android:layout_alignStart="@+id/swap" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/swap"
         android:text="switch"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/refresh"/>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

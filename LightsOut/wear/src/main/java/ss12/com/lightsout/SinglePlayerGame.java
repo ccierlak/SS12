@@ -33,15 +33,12 @@ import java.util.Random;
 
 public class SinglePlayerGame extends Activity implements MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks, SensorEventListener {
-
     private GoogleApiClient mGoogleApiClient;
     private final String TAG = "Single Player Wear"; //tag for logging
     private Vibrator vibrator;
     TextView mTextView;
     Button button;
-    Button swap;
-
-    private int sensorType=0;
+    TextView compare;
 
     //timer variables
     //begin time limit at 5 seconds
@@ -55,14 +52,11 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     private SensorManager sensorManager;
     private Sensor accel,gyro,magnet;
     private float[] dataArray = new float[3];
-    private double[] gravity =  {0,0,0};
-    private double[] acceleration = {0,0,0};
+
     //max readings for the accelerometer per round
     private double xMaxAccel=0,yMaxAccel=0,zMaxAccel=0;
-    //max readings for the gyroscope per round
-    private double xMaxGyro=0,yMaxGyro=0,zMaxGyro=0;
 
-    private double xMaxM=0,yMaxM=0,zMaxM=0;
+    boolean viewDone=false;
 
     //Time limit implemented through Handler
     static private Handler mHandler = new Handler() {
@@ -70,8 +64,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
                 //this triggers after a certain amount of time has passed defined by timeLimit
-                ((SinglePlayerGame) msg.obj).endRound(msg.what);
-
+                //((SinglePlayerGame) msg.obj).endRound(msg.what);
         }
     };
 
@@ -85,29 +78,16 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.text);
                 button = (Button) stub.findViewById(R.id.refresh);
-                swap = (Button) stub.findViewById(R.id.swap);
-
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        xMaxGyro=0;
-                        yMaxGyro=0;
-                        zMaxGyro=0;
                         xMaxAccel=0;
                         yMaxAccel=0;
                         zMaxAccel=0;
-                        xMaxM=0;
-                        yMaxM=0;
-                        zMaxM=0;
                     }
                 });
-                swap.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        sensorType++;
-                        sensorType%=3;
-                    }
-                });
+                compare = (TextView) stub.findViewById(R.id.compare);
+                viewDone=true;
             }
         });
         //keep screen active on wearable
@@ -116,10 +96,6 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         //register sensors
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        magnet=sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-
-        //build apiClient
         createGoogleApiClient();
 
         //create random number generator
@@ -147,11 +123,9 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                         Log.d(TAG, "onConnectionFailed: " + result);
                     }
                 })
-                        // adding only the wearable API
+                // adding only the wearable API
                 .addApi(Wearable.API)
-                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
-
     }
 
     //this method sets the global variable nodeId to the id of the phone for communication
@@ -173,7 +147,6 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                     nodeId=nodes.get(0).getId();
                     Log.d(TAG,nodeId);
                 }
-
                 Log.d(TAG,nodes.size()+"");
             }
         }).start();
@@ -181,9 +154,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
 
     //game logic for each round
     private void startRound(int action){
-        sensorManager.registerListener(this,accel,sensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this,gyro,SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this,magnet,SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this,accel,SensorManager.SENSOR_DELAY_NORMAL);
 
         //increase time limit randomly up to half a second only if it will result in less than
         //five seconds for the user to react
@@ -204,7 +175,6 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     private void endRound(int expectedAction){
         //unregister Listener at the end of every round
         sensorManager.unregisterListener(this,accel);
-        sensorManager.unregisterListener(this,gyro);
 
         int actualAction = 5;
         if(actualAction==expectedAction){
@@ -236,32 +206,17 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     //returns an int representing which of the 3 axes recorded the most activity
     //this will be compared to what axis activity is expected on to determine if the round is won
     //or lost
-    /*private int compareAxes(){
-        double maxAxis = Math.max(Math.max(xMaxAccel,yMaxAccel),zMaxAccel);
-        if(maxAxis==xMaxAccel){//x
-            return 0;
-        }
-        else if(maxAxis==yMaxAccel){//y
-                return 1;
-            }
-        else{//z
-            return 2;
-        }
-
-    }*/
-    private int compareAxes(double x,double y,double z){
-        double maxAxis = Math.max(Math.max(x,y),z);
-        if(maxAxis==x){//x
-            return 0;
-        }
-        else if(maxAxis==y){//y
-            return 1;
-        }
-        else{//z
-            return 2;
-        }
+    private void compareAxes(){
+        Log.d(TAG,"axes update");
+        /*for debug
+        compare.setText("\nxy: "+((xMaxAccel+1)/(yMaxAccel+1))+"\nxz:"+
+                ((xMaxAccel+1)/(zMaxAccel+1))+"\nyx: "+((yMaxAccel+1)/(xMaxAccel+1))+"\nyz: "
+                +((yMaxAccel+1)/(zMaxAccel+1))+"\nzx: "+((zMaxAccel+1)/(xMaxAccel+1))+
+                "\nzy: "+((zMaxAccel+1)/(yMaxAccel+1)));
+                */
 
     }
+
 
     //auditory and haptic feedback on success or fail
     private void respond(int action){
@@ -340,26 +295,12 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     @Override
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
+            //taking the absolute value accounts for the magnitude of negative acceleration
+            dataArray[0] = Math.abs(event.values[0]);
+            dataArray[1] = Math.abs(event.values[1]);
+            dataArray[2] = Math.abs(event.values[2]);
 
-            dataArray[0] = event.values[0];
-            dataArray[1] = event.values[1];
-            dataArray[2] = event.values[2];
 
-        // filter to account for gravity in accelerometer readings
-        // alpha is calculated as t / (t + dT)
-        // with t, the low-pass filter's time-constant
-        // and dT, the event delivery rate
-
-       /* final double alpha = 0.8;
-
-        gravity[0] = alpha * gravity[0] + (1 - alpha) * dataArray[0];
-        gravity[1] = alpha * gravity[1] + (1 - alpha) * dataArray[1];
-        gravity[2] = alpha * gravity[2] + (1 - alpha) * dataArray[2];
-
-        acceleration[0] = dataArray[0] - gravity[0];
-        acceleration[1] = dataArray[1] - gravity[1];
-        acceleration[2] = dataArray[2] - gravity[2];
-        */
         if (mySensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
             if (dataArray[0] > xMaxAccel)
@@ -369,31 +310,13 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             if (dataArray[2] > zMaxAccel)
                 zMaxAccel = dataArray[2];
         }
-        else if(mySensor.getType() == Sensor.TYPE_GYROSCOPE){
-            if (dataArray[0] > xMaxGyro)
-                xMaxGyro = dataArray[0];
-            if (dataArray[1] > yMaxGyro)
-                yMaxGyro = dataArray[1];
-            if (dataArray[2] > zMaxGyro)
-                zMaxGyro = dataArray[2];
-        }
-        else if(mySensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
-            if (dataArray[0] > xMaxM)
-                xMaxM = dataArray[0];
-            if (dataArray[1] > yMaxM)
-                yMaxM = dataArray[1];
-            if (dataArray[2] > zMaxM)
-                zMaxM = dataArray[2];
-        }
 
-        //TextView display of accelerometer data
-        TextView textview = (TextView) findViewById(R.id.text);
-        if(sensorType==0)
-        textview.setText("accel"+"\nx: "+dataArray[0]+"\n"+xMaxAccel+"\ny: "+dataArray[1]+"\n"+yMaxAccel+"\nz: "+dataArray[2]+"\n"+zMaxAccel);
-        if(sensorType==1)
-            textview.setText("gyro"+"\nx: "+dataArray[0]+"\n"+xMaxGyro+"\ny: "+dataArray[1]+"\n"+yMaxGyro+"\nz: "+dataArray[2]+"\n"+zMaxGyro);
-        if(sensorType==2)
-            textview.setText("magnet"+"\nx: "+dataArray[0]+"\n"+xMaxM+"\ny: "+dataArray[1]+"\n"+yMaxM+"\nz: "+dataArray[2]+"\n"+zMaxM);
+        /*for debug
+        if(viewDone) {
+
+            //TextView display of accelerometer data
+                mTextView.setText("accel" + "\nx: " + xMaxAccel + "\ny: " + yMaxAccel + "\nz: "+zMaxAccel);
+        }*/
 
 
 
