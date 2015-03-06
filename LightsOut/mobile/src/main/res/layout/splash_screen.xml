@@ -10,10 +10,10 @@
     <com.google.android.gms.common.SignInButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/textView"
         android:id="@+id/sign_in"
         android:visibility="visible"
-        >
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true">
                 </com.google.android.gms.common.SignInButton>
 
     <TextView android:text="Lights Out!" android:layout_width="wrap_content"
@@ -21,9 +21,9 @@
         android:textColor="#ffe3e8de"
         android:textStyle="bold|italic"
         android:typeface="serif"
-        android:textSize="58sp"
+        android:textSize="50sp"
         android:id="@+id/textView"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/sign_in"
         android:layout_centerHorizontal="true" />
 
     <Button
@@ -34,8 +34,9 @@
         android:textSize="25sp"
         android:textStyle="bold"
         android:id="@+id/fight"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/textView"
+        android:layout_alignStart="@+id/leaderboards"
+        android:layout_alignEnd="@+id/leaderboards" />
 
     <Button
         android:layout_width="240dp"

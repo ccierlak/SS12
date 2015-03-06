@@ -7,28 +7,27 @@
     tools:context="ss12.com.lightsout.SinglePlayerGame"
     android:background="#000000">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
+    <TextView android:text="Round 1:" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/text"
         android:textColor="#ffe3e8de"
         android:textStyle="bold|italic"
         android:typeface="serif"
         android:textSize="58sp"
-        />
+        android:id="@+id/text2"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
+        android:layout_width="540dp"
+        android:layout_height="440dp"
         android:background="@drawable/custom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text"
         android:text = "Make'a'Move"
+        android:textStyle="bold"
         android:textSize="25sp"
-        android:id="@+id/button"/>
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="55dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button"
-        android:id="@+id/text2"/>
 
 </RelativeLayout>

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">LightsOut</string>
     <string name="hello_round">Hello Round World!</string>
-    <string name="hello_square">Hello Square World!</string>
+    <string name="hello_square">Game About to Start</string>
     <string name="title_activity_single_player_game">SinglePlayerGame</string>
+<<<<<<< HEAD
     <string name="title_activity_sensor_fusion">SensorFusion</string>
 
+=======
+>>>>>>> d2ff99b34470639f5bed8eec56e8e45886812899
 </resources>

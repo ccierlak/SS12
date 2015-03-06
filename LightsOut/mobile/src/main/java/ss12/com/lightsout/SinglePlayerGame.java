@@ -2,6 +2,7 @@ package ss12.com.lightsout;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
@@ -13,7 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.example.games.basegameutils.BaseGameUtils;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
@@ -39,7 +40,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     private Random random = new Random();
     private Vibrator vibrator;
     private TextToSpeech textToSpeech;
-
+    private MediaPlayer sfx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-        tv = (TextView) findViewById(R.id.text);
+        tv = (TextView) findViewById(R.id.text2);
         Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +81,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     private void startRound(){
         String action = random.nextInt(3)+"";
         int actionMotion = Integer.parseInt(action);
-       // respond(actionMotion);
+        respond(actionMotion);
         Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,action,null);
     }
 
@@ -105,13 +106,13 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 break;
             case 1://counter
                 vibrator.vibrate(new long[]{0, 400, 0, 0, 0, 0, 400, 0 , 0, 0, 0, 500}, -1);
-                textToSpeech.speak("Counter", TextToSpeech.QUEUE_FLUSH, null);
-                Toast.makeText(getApplicationContext(), "Counter", Toast.LENGTH_SHORT).show();
+                textToSpeech.speak("Block", TextToSpeech.QUEUE_FLUSH, null);
+                Toast.makeText(getApplicationContext(), "Block", Toast.LENGTH_SHORT).show();
                 break;
             case 2: //push
                 vibrator.vibrate(new long[]{0, 400, 0, 0, 0, 0, 400,0 , 0, 0, 0, 400, 0 , 0 , 0, 500}, -1);
-                textToSpeech.speak("Push",TextToSpeech.QUEUE_FLUSH,null);
-                Toast.makeText(getApplicationContext(), "Push", Toast.LENGTH_SHORT).show();
+                textToSpeech.speak("Rush",TextToSpeech.QUEUE_FLUSH,null);
+                Toast.makeText(getApplicationContext(), "Rush", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
@@ -219,7 +220,20 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             @Override
             public void run() {
                 Log.d("Wearable", "message received");
-                tv.setText(message);
+                if (message == "0") {
+                    tv = (TextView) findViewById(R.id.text2);
+                    tv.setText("Fail");
+                    textToSpeech.speak("Wrong Move", TextToSpeech.QUEUE_FLUSH, null);
+                    sfxPlayer(R.raw.fail);
+
+                }
+                else
+                {
+                    tv = (TextView) findViewById(R.id.text2);
+                    tv.setText("Success");
+                    textToSpeech.speak("Point Scored",TextToSpeech.QUEUE_FLUSH,null);
+                    sfxPlayer(R.raw.cheering);
+                }
             }
         });
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
@@ -230,5 +244,13 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     protected void onStop() {
         Wearable.MessageApi.removeListener(mGoogleApiClient, this);
         super.onStop();
+    }
+    protected void sfxPlayer(int theText) {
+        if (sfx != null) {
+            sfx.reset();
+            sfx.release();
+        }
+        sfx = MediaPlayer.create(this, theText);
+        sfx.start();
     }
 }
