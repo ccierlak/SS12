@@ -396,6 +396,10 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 x = "4";
                 Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
                 break;
+            case "ready to fight":
+                x = "5";
+                Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
+                break;
             default:
                 x = "99";
                 Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);

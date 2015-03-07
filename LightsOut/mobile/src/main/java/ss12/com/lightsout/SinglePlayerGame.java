@@ -227,12 +227,19 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                     sfxPlayer(R.raw.fail);
                     vibrator.vibrate(new long[] { 0, 2000, 0 }, -1);
                 }
-                else
+                if (Integer.parseInt(message) == 1)
                 {
                     tv.setText("Success");
                     textToSpeech.speak("Point Scored",TextToSpeech.QUEUE_FLUSH,null);
                     sfxPlayer(R.raw.cheering);
                     vibrator.vibrate(new long[] { 0, 200, 0, 200, 0 , 200 ,  }, -1);
+                }
+                if(Integer.parseInt(message) == 5)
+                {
+                    int actionMotion = random.nextInt(3);
+                    String action = actionMotion+"";
+                    respond(actionMotion);
+                    Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,action,null);
                 }
             }
         });
