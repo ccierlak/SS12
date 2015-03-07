@@ -15,16 +15,10 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.MessageEvent;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-import java.util.List;
-
 public class MobileMain extends Activity implements GoogleApiClient.ConnectionCallbacks,
-        View.OnClickListener, GoogleApiClient.OnConnectionFailedListener, MessageApi.MessageListener {
+        View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
 
     private boolean mSignInClicked=false;
@@ -33,7 +27,7 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
     private int RC_SIGN_IN=0;
     private GoogleApiClient mGoogleApiClient;
     private final String TAG="mobile main";
-    private String nodeId = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +39,7 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+
         findViewById(R.id.sign_in).setOnClickListener(this);
 
         //set up button for going into game modes
@@ -104,11 +98,11 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "onConnected: " + bundle);
-        Wearable.MessageApi.addListener(mGoogleApiClient,this);
+
         //removes Google+ sign in if the user is already signed in
         findViewById(R.id.sign_in).setVisibility(View.GONE);
         Toast.makeText(this, "Google Api Client Connected", Toast.LENGTH_LONG).show();
-        retrieveDeviceNode();
+
     }
 
     //on suspended callback for GoogleAPIClient
@@ -125,28 +119,6 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
             mSignInClicked = true;
             resolveSignInError();
         }
-    }
-    private void retrieveDeviceNode() {
-        //we are using a worker thread to get the nodeId since we do not want to
-        // clog up the main thread
-        Log.d(TAG,"nodes retrieved");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                NodeApi.GetConnectedNodesResult nodesResult =
-                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-                final List<Node> nodes = nodesResult.getNodes();
-                //we are assuming here that there is only one wearable attached to the phone
-                //currently Android only supports having one wearable connected at a time
-                if (nodes.size() > 0) {
-                    nodeId=nodes.get(0).getId();
-                    Log.d(TAG,nodeId);
-                }
-                Log.d(TAG,nodes.size()+"");
-            }
-        }).start();
     }
 
 
@@ -219,33 +191,4 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
         }
     }
 
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-        final String message = messageEvent.getPath();
-        final int expectedAction = Integer.parseInt(message);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("Wearable", "phone message received: " + expectedAction);
-                actionGiven(expectedAction);
-            }
-        });
-    }
-    public  void actionGiven(int action)
-    {
-        switch (action)
-        {
-            case 4://punch
-                Toast.makeText(getApplicationContext(),"start",Toast.LENGTH_SHORT).show();
-                break;
-            case 99: //counter
-                Toast.makeText(getApplicationContext(),"Invalid",Toast.LENGTH_SHORT).show();
-                break;
-            case 2: //push
-                Toast.makeText(getApplicationContext(),"Rush",Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                break;
-        }
-    }
 }
