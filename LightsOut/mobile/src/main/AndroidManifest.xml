@@ -32,6 +32,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".VoiceCommand" android:label="Lights">
+            <intent-filter>
+                <action android:name="android.intent.action.MobileMain" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".SinglePlayerGame"
             android:label="@string/title_activity_in_game"
