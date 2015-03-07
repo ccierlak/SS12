@@ -36,6 +36,8 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     private GoogleApiClient mGoogleApiClient;
     private final String TAG = "Single Player Wear"; //tag for logging
     private Vibrator vibrator;
+
+
     TextView mTextView;
     Button button;
     TextView compare;
