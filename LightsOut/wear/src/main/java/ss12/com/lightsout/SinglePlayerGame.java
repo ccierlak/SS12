@@ -271,10 +271,14 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             //win detected
             //send message back to phone, 1 signifies win
             Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,"1",null);
+            vibrator.vibrate(new long[] { 0, 1000, 0 }, -1);
+
         }else{
             //loss detected
             //send message back to phone, 0 signifies loss
             Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,"0",null);
+            vibrator.vibrate(new long[] { 0, 400, 0, 400 }, -1);
+
         }
 
     }
