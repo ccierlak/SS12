@@ -41,8 +41,8 @@ public class VoiceCommand extends MobileMain {
     {
         switch (voiceCommand)
         {
-            case "Lights Out":
-                
+            case "Start Fight":
+                setContentView(R.layout.activity_in_game);
             break;
         }
     }
