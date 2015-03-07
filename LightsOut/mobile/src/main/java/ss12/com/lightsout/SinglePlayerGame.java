@@ -68,8 +68,8 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startRound();
-                Log.d(TAG, "push: " + nodeId);
+                String action = startRound();
+                Log.d(TAG, "push: " + action);
             }
         });
     }
@@ -78,11 +78,13 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     each number represents a different action for the wearable to expect from
     the accelerometer data (ie 0 represents a punch expecting action on the x axis)
      */
-    private void startRound(){
-        String action = random.nextInt(3)+"";
-        int actionMotion = Integer.parseInt(action);
+    private String startRound(){
+
+        int actionMotion = random.nextInt(3);
+        String action = actionMotion+"";
         respond(actionMotion);
         Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,action,null);
+        return action;
     }
 
     //update ui elements
@@ -219,9 +221,9 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.d("Wearable", "message received");
-                if (message == "0") {
-                    tv = (TextView) findViewById(R.id.text2);
+                Log.d(TAG, "wear message received "+message);
+                tv = (TextView) findViewById(R.id.results);
+                if (Integer.parseInt(message) == 0) {
                     tv.setText("Fail");
                     textToSpeech.speak("Wrong Move", TextToSpeech.QUEUE_FLUSH, null);
                     sfxPlayer(R.raw.fail);
@@ -229,7 +231,6 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 }
                 else
                 {
-                    tv = (TextView) findViewById(R.id.text2);
                     tv.setText("Success");
                     textToSpeech.speak("Point Scored",TextToSpeech.QUEUE_FLUSH,null);
                     sfxPlayer(R.raw.cheering);

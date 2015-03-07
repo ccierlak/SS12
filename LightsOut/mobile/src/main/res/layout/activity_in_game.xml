@@ -17,6 +17,17 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/results"
+        android:text="\?"
+        android:layout_below="@+id/text2"
+        android:textColor="#ffe3e8de"
+        android:textSize="58sp"
+        android:typeface="serif"
+        android:layout_centerHorizontal="true"/>
+
     <Button
         android:layout_width="540dp"
         android:layout_height="440dp"
