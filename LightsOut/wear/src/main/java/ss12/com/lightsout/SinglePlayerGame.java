@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.Games;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -334,13 +333,13 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         switch (action)
         {
             case 0://punch
-                Toast.makeText(getApplicationContext(),"punch",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Punch",Toast.LENGTH_SHORT).show();
                 break;
             case 1: //counter
-                Toast.makeText(getApplicationContext(),"block",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Block",Toast.LENGTH_SHORT).show();
                 break;
             case 2: //push
-                Toast.makeText(getApplicationContext(),"counter",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Rush",Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
