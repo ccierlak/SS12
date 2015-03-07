@@ -5,15 +5,26 @@
     tools:context="ss12.com.lightsout.SinglePlayerGame" tools:deviceIds="wear_square"
     android:weightSum="1">
 
-    <TextView android:id="@+id/text" android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:text="@string/hello_square"
-        android:layout_weight="0.71"
-        android:textAlignment="center" />
+    <TextView android:id="@+id/text" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="this should change"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+        android:id="@+id/compare"
+        android:layout_below="@+id/text"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/refresh"
+        android:text="refresh"
+        android:layout_below="@+id/compare"
+        android:layout_centerHorizontal="true"
+        />
 </LinearLayout>
