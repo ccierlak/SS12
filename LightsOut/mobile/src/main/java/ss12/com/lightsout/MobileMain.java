@@ -15,9 +15,15 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-public class MobileMain extends Activity implements GoogleApiClient.ConnectionCallbacks,
+import java.util.List;
+
+public class MobileMain extends Activity implements GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener,
         View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
 
@@ -27,6 +33,7 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
     private int RC_SIGN_IN=0;
     private GoogleApiClient mGoogleApiClient;
     private final String TAG="mobile main";
+    private String nodeId = "";
 
 
     @Override
@@ -47,9 +54,20 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
 
         //set up button for going into leaderboards
         findViewById(R.id.leaderboards).setOnClickListener(this);
+        mGoogleApiClient.connect();
 
     }
-
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(TAG, "onConnected: " + bundle);
+        //removes Google+ sign in if the user is already signed in
+        findViewById(R.id.sign_in).setVisibility(View.GONE);
+        Toast.makeText(this, "Google Api Client Connected", Toast.LENGTH_LONG).show();
+        Wearable.MessageApi.addListener(mGoogleApiClient,this);
+        // now we can use the Message API
+        //assigns nodeId
+        retrieveDeviceNode();
+    }
 
     @Override
     protected void onStop() {
@@ -65,8 +83,8 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API, Plus.PlusOptions.builder().build())
                 .addApi(Wearable.API)
-                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
+               // .addApi(Games.API).addScope(Games.SCOPE_GAMES)
+              //  .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .build();
         mGoogleApiClient.connect();
         Toast.makeText(this,"Google Api Client Built",Toast.LENGTH_LONG).show();
@@ -94,22 +112,11 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
         return super.onOptionsItemSelected(item);
     }
 
-    //on connected callback for GoogleAPIClient
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected: " + bundle);
-
-        //removes Google+ sign in if the user is already signed in
-        findViewById(R.id.sign_in).setVisibility(View.GONE);
-        Toast.makeText(this, "Google Api Client Connected", Toast.LENGTH_LONG).show();
-
-    }
 
     //on suspended callback for GoogleAPIClient
     @Override
     public void onConnectionSuspended(int cause) {
         Log.d(TAG, "onConnectionSuspended: " + cause);
-        Toast.makeText(this,"Google Api Client Suspended",Toast.LENGTH_LONG).show();
 
     }
 
@@ -191,4 +198,55 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
         }
     }
 
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        final String message = messageEvent.getPath();
+        final int expectedAction = Integer.parseInt(message);
+        Toast.makeText(getApplicationContext(),expectedAction,Toast.LENGTH_SHORT).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                actionGiven(expectedAction);
+            }
+        });
+    }
+    private void retrieveDeviceNode() {
+        //we are using a worker thread to get the nodeId since we do not want to
+        // clog up the main thread
+        Log.d(TAG,"nodes retrieved");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                NodeApi.GetConnectedNodesResult nodesResult =
+                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+                final List<Node> nodes = nodesResult.getNodes();
+                //we are assuming here that there is only one wearable attached to the phone
+                //currently Android only supports having one wearable connected at a time
+                if (nodes.size() > 0) {
+                    nodeId=nodes.get(0).getId();
+                    Log.d(TAG,nodeId);
+                }
+                Log.d(TAG,nodes.size()+"");
+            }
+        }).start();
+    }
+    public  void actionGiven(int action)
+    {
+        switch (action)
+        {
+            case 4://punch
+                Toast.makeText(getApplicationContext(),"start match",Toast.LENGTH_SHORT).show();
+                break;
+            case 99: //counter
+                Toast.makeText(getApplicationContext(),"Invalid action",Toast.LENGTH_SHORT).show();
+                break;
+            case 2: //push
+                Toast.makeText(getApplicationContext(),"Rush",Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
+    }
 }
