@@ -2,6 +2,7 @@ package ss12.com.lightsout;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.speech.RecognizerIntent;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
@@ -87,6 +89,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                         xMaxAccel=0;
                         yMaxAccel=0;
                         zMaxAccel=0;
+                        displaySpeechRecognizer();
                     }
                 });
                 compare = (TextView) stub.findViewById(R.id.compare);
@@ -141,7 +144,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.d("Wearable", "phone message received: "+expectedAction);
+                Log.d("Wearable", "phone message received: " + expectedAction);
                 actionGiven(expectedAction);
                 startRound(expectedAction);
             }
@@ -345,5 +348,48 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 break;
         }
     }
+    private static final int SPEECH_REQUEST_CODE = 0;
 
+    // Create an intent that can start the Speech Recognizer activity
+    private void displaySpeechRecognizer() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+// Start the activity, the intent will be populated with the speech text
+        startActivityForResult(intent, SPEECH_REQUEST_CODE);
+    }
+
+    // This callback is invoked when the Speech Recognizer returns.
+// This is where you process the intent and extract the speech text from the intent.
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(
+                    RecognizerIntent.EXTRA_RESULTS);
+            String spokenText = results.get(0);
+            // Do something with spokenText
+            Toast.makeText(getApplicationContext(), spokenText, Toast.LENGTH_SHORT).show();
+            speechToAction(spokenText);
+
+
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void speechToAction(String actionType)
+    {
+        String x;
+        switch (actionType)
+        {
+            case "start match":
+                x = "4";
+                Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
+                break;
+            default:
+                x = "99";
+                Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
+                break;
+        }
+    }
 }
