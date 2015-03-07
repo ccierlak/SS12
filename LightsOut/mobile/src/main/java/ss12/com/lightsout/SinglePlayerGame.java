@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.Games;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -168,7 +166,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 })
                         // adding only the wearable API
                 .addApi(Wearable.API)
-                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
+               // .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
     }
@@ -227,13 +225,14 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                     tv.setText("Fail");
                     textToSpeech.speak("Wrong Move", TextToSpeech.QUEUE_FLUSH, null);
                     sfxPlayer(R.raw.fail);
-
+                    vibrator.vibrate(new long[] { 0, 2000, 0 }, -1);
                 }
                 else
                 {
                     tv.setText("Success");
                     textToSpeech.speak("Point Scored",TextToSpeech.QUEUE_FLUSH,null);
                     sfxPlayer(R.raw.cheering);
+                    vibrator.vibrate(new long[] { 0, 200, 0, 200, 0 , 200 ,  }, -1);
                 }
             }
         });

@@ -271,12 +271,22 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             //win detected
             //send message back to phone, 1 signifies win
             Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,"1",null);
+
         }else{
             //loss detected
             //send message back to phone, 0 signifies loss
             Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,"0",null);
         }
+        if(actualAction==expectedAction){
+            //win detected
+            //send message back to phone, 1 signifies win
+            vibrator.vibrate(new long[] { 0, 2000, 0 }, -1);
 
+        }else{
+            //loss detected
+            //send message back to phone, 0 signifies loss
+            vibrator.vibrate(new long[] { 0, 200, 0, 200, 0 , 200 ,  }, -1);
+        }
     }
 
     //returns an int representing which of the 3 axes recorded the most activity

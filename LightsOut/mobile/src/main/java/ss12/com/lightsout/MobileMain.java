@@ -14,7 +14,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.plus.Plus;
 import com.google.android.gms.wearable.Wearable;
 
 public class MobileMain extends Activity implements GoogleApiClient.ConnectionCallbacks,
@@ -62,11 +61,16 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
         //Basic Google Api Client build
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Plus.API, Plus.PlusOptions.builder().build())
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(ConnectionResult result) {
+                        Log.d(TAG, "onConnectionFailed: " + result);
+                    }
+                })
+                //.addApi(Plus.API, Plus.PlusOptions.builder().build())
                 .addApi(Wearable.API)
-                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
+              //  .addApi(Games.API).addScope(Games.SCOPE_GAMES)
+               // .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .build();
         mGoogleApiClient.connect();
         Toast.makeText(this,"Google Api Client Built",Toast.LENGTH_LONG).show();
