@@ -282,6 +282,54 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             mHandler.sendMessageDelayed(msg, 1000);
             */
         }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(TAG, "onConnected: " + bundle);
+        Wearable.MessageApi.addListener(mGoogleApiClient,this);
+        // now we can use the Message API
+        //assigns nodeId
+        retrieveDeviceNode();
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.d(TAG, "onConnectionSuspended: " + cause);
+
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        final String message = messageEvent.getPath();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "wear message received "+message);
+                tv = (TextView) findViewById(R.id.results);
+                if (Integer.parseInt(message) == 0) {
+                    tv.setText("Fail");
+                    textToSpeech.speak("Wrong Move", TextToSpeech.QUEUE_FLUSH, null);
+                    sfxPlayer(R.raw.fail);
+                    vibrator.vibrate(new long[] { 0, 2000, 0 }, -1);
+                }
+                if (Integer.parseInt(message) == 1)
+                {
+                    tv.setText("Success");
+                    textToSpeech.speak("Point Scored",TextToSpeech.QUEUE_FLUSH,null);
+                    sfxPlayer(R.raw.cheering);
+                    vibrator.vibrate(new long[] { 0, 200, 0, 200, 0 , 200 ,  }, -1);
+                }
+                if(Integer.parseInt(message) == 5)
+                {
+                    int actionMotion = random.nextInt(3);
+                    String action = actionMotion+"";
+                    respond(actionMotion);
+                    Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,action,null);
+                }
+            }
+        });
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+
     }
 
     protected void sfxPlayer(int theText) {
