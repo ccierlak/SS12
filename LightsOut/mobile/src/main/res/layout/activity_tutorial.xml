@@ -4,41 +4,47 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="ss12.com.lightsout.SinglePlayerGame"
-    android:background="#000000">
+    tools:context="ss12.com.lightsout.Tutorial">
 
-    <TextView android:text="Round 1:" android:layout_width="wrap_content"
+
+    <TextView
+        android:text="QUICK OVERVIEW!"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#ffe3e8de"
         android:textStyle="bold|italic"
         android:typeface="serif"
-        android:textSize="58sp"
-        android:id="@+id/text2"
+        android:textSize="40sp"
+        android:id="@+id/tutTitle"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
     <TextView
+        android:text="Lights Out will be the most fun app you have played with because it was created with YOU in mind!
+        \nThere are 3 easy motions to learn: \n
+        \tPUNCH
+        \tBLOCK
+        \tRUSH
+        \n\nLet's get started!"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/results"
-        android:text="\?"
-        android:layout_below="@+id/text2"
         android:textColor="#ffe3e8de"
-        android:textSize="58sp"
+        android:textStyle="bold|italic"
         android:typeface="serif"
-        android:layout_centerHorizontal="true"/>
+        android:textSize="20sp"
+        android:id="@+id/tutIntro"
+        android:layout_marginTop="49dp"
+        android:layout_below="@+id/tutTitle"
+        android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="540dp"
-        android:layout_height="440dp"
-        android:background="@drawable/boxglove_custom"
-        android:text = "Make'a'Move"
-        android:textStyle="bold"
-        android:textSize="25sp"
-        android:id="@+id/button"
+        android:id="@+id/punchButton"
+        android:text="The Art of the Punch"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="55dp" />
+        android:layout_alignParentRight="true"
 
+        />
 
 </RelativeLayout>

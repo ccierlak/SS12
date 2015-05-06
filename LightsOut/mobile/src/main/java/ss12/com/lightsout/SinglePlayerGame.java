@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +16,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.Fitness;
+
 import com.google.android.gms.games.Games;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
@@ -41,6 +42,18 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     private Vibrator vibrator;
     private TextToSpeech textToSpeech;
     private MediaPlayer sfx;
+    private int strikes = 0;
+    private int points = 0;
+
+    /*static private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            //this triggers after a certain amount of time has passed defined by timeLimit
+            Log.d("mobile message handler","delay message received");
+            ((SinglePlayerGame) msg.obj).startRound();
+        }
+    };*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +86,79 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             }
         });
     }
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(TAG, "onConnected: " + bundle);
+        Wearable.MessageApi.addListener(mGoogleApiClient,this);
+        // now we can use the Message API
+        //assigns nodeId
+        retrieveDeviceNode();
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.d(TAG, "onConnectionSuspended: " + cause);
+
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        final String message = messageEvent.getPath();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "wear message received "+message);
+                tv = (TextView) findViewById(R.id.results);
+                if (Integer.parseInt(message) != 9) {
+                    tv.setText("Fail");
+                    textToSpeech.speak("Wrong Move", TextToSpeech.QUEUE_FLUSH, null);
+                    sfxPlayer(R.raw.fail);
+                    //check to see if the game ends
+                    endgame();
+                }
+                else
+                {
+                    tv.setText("Success");
+                    textToSpeech.speak("Point Scored",TextToSpeech.QUEUE_FLUSH,null);
+                    sfxPlayer(R.raw.cheering);
+                    points++;
+                    startRound();
+                }
+            }
+        });
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    protected void onStop() {
+        Wearable.MessageApi.removeListener(mGoogleApiClient, this);
+        super.onStop();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_in_game, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     /*generates a random number from 0 - 2 to send to the wearable
     each number represents a different action for the wearable to expect from
@@ -135,27 +221,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         //possibly end game here
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_in_game, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
     private void createGoogleApiClient(){
         //Basic Google Api Client build
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -199,53 +265,25 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
      Log.d(TAG,size+" = node size");
     }
 
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected: " + bundle);
-        Wearable.MessageApi.addListener(mGoogleApiClient,this);
-        // now we can use the Message API
-        //assigns nodeId
-        retrieveDeviceNode();
+    private void endgame(){
+        strikes++;
+        if(strikes == 3){
+            strikes = 0;
+            //end the game
+            //submit score to leaderboard
+            Games.Leaderboards.submitScore(mGoogleApiClient,
+                    getResources().getString(R.string.leaderboard_high_score), 1337);
+        }
+        else
+        {
+            startRound();
+            /*
+            Message msg = mHandler.obtainMessage(1337,this);
+            mHandler.sendMessageDelayed(msg, 1000);
+            */
+        }
     }
 
-    @Override
-    public void onConnectionSuspended(int cause) {
-        Log.d(TAG, "onConnectionSuspended: " + cause);
-
-    }
-
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-        final String message = messageEvent.getPath();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "wear message received "+message);
-                tv = (TextView) findViewById(R.id.results);
-                if (Integer.parseInt(message) == 0) {
-                    tv.setText("Fail");
-                    textToSpeech.speak("Wrong Move", TextToSpeech.QUEUE_FLUSH, null);
-                    sfxPlayer(R.raw.fail);
-
-                }
-                else
-                {
-                    tv.setText("Success");
-                    textToSpeech.speak("Point Scored",TextToSpeech.QUEUE_FLUSH,null);
-                    sfxPlayer(R.raw.cheering);
-                }
-            }
-        });
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    protected void onStop() {
-        Wearable.MessageApi.removeListener(mGoogleApiClient, this);
-        super.onStop();
-    }
     protected void sfxPlayer(int theText) {
         if (sfx != null) {
             sfx.reset();
@@ -254,4 +292,5 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         sfx = MediaPlayer.create(this, theText);
         sfx.start();
     }
+
 }

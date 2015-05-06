@@ -35,11 +35,7 @@
     <!-- MAIN SCREEN -->
     <LinearLayout android:id="@+id/screen_main" style="@style/LLScreen">
         <TextView style="@style/GameTitle" />
-        <Button android:id="@+id/button_single_player_2"
-            style="@style/MainScreenButton"
-            android:text="@string/single_player" />
-        <TextView style="@style/MainScreenButtonBlurb"
-            android:text="@string/single_player_explanation" />
+
         <Button android:id="@+id/button_quick_game"
             style="@style/MainScreenButton"
             android:text="@string/quick_game" />
@@ -75,13 +71,7 @@
 
     <!-- GAMEPLAY SCREEN -->
     <LinearLayout android:id="@+id/screen_game" style="@style/LLScreen">
-        <TextView android:id="@+id/instructions"
-            style="@style/Instructions" android:text="@string/instructions" />
-        <TextView android:id="@+id/my_score" style="@style/ScoreDisplay" />
-        <Button android:id="@+id/button_click_me"
-            style="@style/GameButton"
-            android:text="@string/click_me"
-            android:layout_marginBottom="20dp" />
+                <TextView android:id="@+id/my_score" style="@style/ScoreDisplay" />
         <TextView android:id="@+id/countdown" style="@style/FigureLabel" />
 
         <LinearLayout style="@style/ScoresBox">

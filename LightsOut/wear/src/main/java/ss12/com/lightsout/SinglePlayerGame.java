@@ -36,14 +36,13 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     private final String TAG = "Single Player Wear"; //tag for logging
     private Vibrator vibrator;
 
-
     TextView mTextView;
     Button button;
     TextView compare;
 
     //timer variables
-    //begin time limit at 3 seconds
-    private int timeLimit = 3000;
+    //begin time limit at 4 seconds
+    private int timeLimit = 4000;
     private Random rand;
 
     //node for mobile device
@@ -233,8 +232,8 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         sensorManager.registerListener(this,accel,SensorManager.SENSOR_DELAY_NORMAL);
 
         //increase time limit randomly up to half a second only if it will result in less than
-        //four seconds for the user to react
-        if(timeLimit<4000) {
+        //five seconds for the user to react
+        if(timeLimit<5000) {
             timeLimit += rand.nextInt(750);
         }
         //decrease time limit up to one second only if it will result in over .8 seconds for the
@@ -266,12 +265,12 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         Log.d(TAG,"actual :"+actualAction+"\texpected: "+expectedAction);
         if(actualAction==expectedAction){
             //win detected
-            //send message back to phone, 1 signifies win
-            Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,"1",null);
+            //send message back to phone, 9 signifies win
+            Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,"9",null);
         }else{
             //loss detected
-            //send message back to phone, 0 signifies loss
-            Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,"0",null);
+            //send message back to phone with possible error code
+            Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,actualAction+"",null);
         }
 
     }
@@ -291,19 +290,23 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 */
         double axisMax = Math.max(Math.max(xMaxAccel,yMaxAccel),zMaxAccel);
         Log.d(TAG,"max axis: "+axisMax);
-        if(axisMax==xMaxAccel){
-            //0 means x axis had the strongest activity
-            return 0;
-        }
-        else if(axisMax==yMaxAccel){
-            //1 means y axis had the strongest activity
-            return 1;
+        if(axisMax>1.5) {
+            //threshold for valid movement reading
+            if (axisMax == xMaxAccel) {
+                //0 means x axis had the strongest activity
+                return 0;
+            } else if (axisMax == yMaxAccel) {
+                //1 means y axis had the strongest activity
+                return 1;
+            } else {
+                //2 means z axis had the strongest activity
+                return 2;
+            }
         }
         else{
-            //2 means z axis had the strongest activity
-            return 2;
+            //3 means no valid movement was registered, round is counted as loss
+            return 3;
         }
-
     }
 
 
@@ -335,7 +338,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             case 0://punch
                 Toast.makeText(getApplicationContext(),"Punch",Toast.LENGTH_SHORT).show();
                 break;
-            case 1: //counter
+            case 1: //block
                 Toast.makeText(getApplicationContext(),"Block",Toast.LENGTH_SHORT).show();
                 break;
             case 2: //push

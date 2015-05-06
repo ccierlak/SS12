@@ -21,34 +21,53 @@
         android:textColor="#ffe3e8de"
         android:textStyle="bold|italic"
         android:typeface="serif"
-        android:textSize="50sp"
+        android:textSize="58sp"
         android:id="@+id/textView"
         android:layout_below="@+id/sign_in"
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:layout_width="240dp"
-        android:layout_height="240dp"
-        android:background="@drawable/custom"
-        android:text="FIGHT"
-        android:textSize="25sp"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:background="@drawable/boxglove_custom"
+        android:text="SINGLE\nPLAYER"
+        android:textSize="17sp"
         android:textStyle="bold"
-        android:id="@+id/fight"
-        android:layout_below="@+id/textView"
-        android:layout_alignStart="@+id/leaderboards"
-        android:layout_alignEnd="@+id/leaderboards" />
+        android:id="@+id/sinButton"
+        android:layout_below="@+id/textView" />
 
-    <Button
-        android:layout_width="240dp"
-        android:layout_height="240dp"
-        android:background="@drawable/custom"
-        android:id="@+id/leaderboards"
-        android:text="STATS"
-        android:textSize="25sp"
+
+      <Button
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:background="@drawable/boxglove_custom"
+        android:text="MULTI\nPLAYER"
+        android:textSize="17sp"
         android:textStyle="bold"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/fight"
+        android:id="@+id/multiButton"
+        android:layout_alignParentBottom="true"
         />
 
+    <Button
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:background="@drawable/boxglove_mirror_custom"
+        android:text="STATS"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:id="@+id/leaderButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"  />
+
+    <Button
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:background="@drawable/boxglove_mirror_custom"
+        android:text="FIT"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:id="@+id/fitButton"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView"/>
 
 </RelativeLayout>
