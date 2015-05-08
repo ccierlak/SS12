@@ -44,7 +44,6 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
         findViewById(R.id.sinButton).setOnClickListener(this);
         findViewById(R.id.leaderButton).setOnClickListener(this);
         findViewById(R.id.multiButton).setOnClickListener(this);
-        findViewById(R.id.fitButton).setOnClickListener(this);
 
     }
 

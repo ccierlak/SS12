@@ -18,8 +18,7 @@
         <meta-data
             android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/app_id" />
-        <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCnwrUwgPzEiOB5YlAmheE6ar_OqpyMc_c"/>
+
 
 
         <activity
