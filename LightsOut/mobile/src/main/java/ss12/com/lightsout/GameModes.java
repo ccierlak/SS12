@@ -213,6 +213,7 @@ public void onActivityResult(int requestCode, int responseCode,
         mResolvingConnectionFailure = false;
         if (responseCode == RESULT_OK) {
         mGoogleApiClient.connect();
+
         } else {
         BaseGameUtils.showActivityResultError(this,requestCode,responseCode, R.string.signin_other_error);
         }
@@ -401,7 +402,8 @@ public void onConnected(Bundle connectionHint) {
         // register listener so we are notified if we receive an invitation to play
         // while we are in the game
         Games.Invitations.registerInvitationListener(mGoogleApiClient, this);
-
+    findViewById(R.id.multiButton).setVisibility(View.VISIBLE);
+    findViewById(R.id.leaderButton).setVisibility(View.VISIBLE);
         if (connectionHint != null) {
         Log.d(TAG, "onConnected: connection hint provided. Checking for invite.");
         Invitation inv = connectionHint

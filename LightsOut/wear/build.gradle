@@ -4,7 +4,14 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 21
     buildToolsVersion "20.0.0"
-
+    signingConfigs {
+        release {
+            storeFile file("AndroidKeyStore.jks")
+            storePassword "Flatnotes5"
+            keyAlias "ss12"
+            keyPassword "Flatnotes5"
+        }
+    }
     defaultConfig {
         applicationId "ss12.com.lightsout"
         minSdkVersion 20
@@ -15,7 +22,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -24,4 +31,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':BaseGameUtils')
     compile 'com.google.android.support:wearable:1.1.0'
+
 }

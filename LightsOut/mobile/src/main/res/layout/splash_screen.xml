@@ -12,8 +12,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/sign_in"
         android:visibility="visible"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignBottom="@+id/multiButton"
+        android:layout_centerHorizontal="true">
                 </com.google.android.gms.common.SignInButton>
 
     <TextView android:text="Lights Out!" android:layout_width="wrap_content"
@@ -23,8 +23,9 @@
         android:typeface="serif"
         android:textSize="58sp"
         android:id="@+id/textView"
-        android:layout_below="@+id/sign_in"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/leaderButton"
+        android:layout_marginTop="62dp" />
 
     <Button
         android:layout_width="190dp"
@@ -34,7 +35,8 @@
         android:textSize="17sp"
         android:textStyle="bold"
         android:id="@+id/sinButton"
-        android:layout_below="@+id/textView" />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 
       <Button
@@ -45,8 +47,9 @@
         android:textSize="17sp"
         android:textStyle="bold"
         android:id="@+id/multiButton"
-        android:layout_alignParentBottom="true"
-        />
+          android:layout_alignParentBottom="true"
+          android:layout_alignParentStart="true"
+          />
 
     <Button
         android:layout_width="190dp"
@@ -56,8 +59,9 @@
         android:textSize="17sp"
         android:textStyle="bold"
         android:id="@+id/leaderButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"  />
+        android:layout_alignTop="@+id/multiButton"
+        android:layout_alignParentEnd="true"
+        />
 
 
 

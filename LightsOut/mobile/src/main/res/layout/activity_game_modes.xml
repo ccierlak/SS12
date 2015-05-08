@@ -30,24 +30,42 @@
     </LinearLayout>
 
     <!-- MAIN SCREEN -->
-    <LinearLayout android:id="@+id/screen_main" style="@style/LLScreen">
+    <LinearLayout android:id="@+id/screen_main"
+        style="@style/LLScreen"
+        android:background="#000000">
         <TextView style="@style/GameTitle" />
 
         <Button android:id="@+id/button_quick_game"
             style="@style/MainScreenButton"
+            android:textSize="18sp"
             android:text="@string/quick_game" />
         <TextView style="@style/MainScreenButtonBlurb"
-            android:text="@string/quick_game_explanation" />
+            android:text="@string/quick_game_explanation"
+            android:textSize="12sp"
+            android:textColor="#ffe3e8de"
+
+            />
         <Button android:id="@+id/button_invite_players"
             style="@style/MainScreenButton"
-            android:text="@string/invite_players" />
+            android:text="@string/invite_players"
+            android:textSize="18sp"
+            />
         <TextView style="@style/MainScreenButtonBlurb"
-            android:text="@string/invite_players_explanation" />
+            android:text="@string/invite_players_explanation"
+            android:textSize="12sp"
+            android:textColor="#ffe3e8de"
+
+            />
         <Button android:id="@+id/button_see_invitations"
             style="@style/MainScreenButton"
-            android:text="@string/see_invitations" />
+            android:text="@string/see_invitations"
+            android:textSize="18sp"
+            />
         <TextView style="@style/MainScreenButtonBlurb"
-            android:text="@string/see_invitations_explanation" />
+            android:text="@string/see_invitations_explanation"
+            android:textSize="12sp"
+            android:textColor="#ffe3e8de"
+            />
         <Button android:id="@+id/button_sign_out"
             style="@style/SignOutButton"
             android:text="@string/sign_out" />

@@ -256,7 +256,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 if (nodes.size() > 0) {
                     nodeId=nodes.get(0).getId();
                     size=nodes.size();
-                    Log.d(TAG,nodeId);
+                    Log.d(TAG,"node id: "+nodeId);
                 }
 
                 Log.d(TAG,nodes.size()+"");

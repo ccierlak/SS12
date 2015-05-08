@@ -3,7 +3,9 @@ package ss12.com.lightsout;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +19,8 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.Locale;
+
 public class MobileMain extends Activity implements GoogleApiClient.ConnectionCallbacks,
         View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
@@ -27,12 +31,22 @@ public class MobileMain extends Activity implements GoogleApiClient.ConnectionCa
     private int RC_SIGN_IN=0;
     private GoogleApiClient mGoogleApiClient;
     private final String TAG="mobile main";
-
+    private TextToSpeech textToSpeech;
+    private MediaPlayer sfx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
+        textToSpeech = new TextToSpeech(this,
+                new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            textToSpeech.setLanguage(Locale.UK);
+                        }
+                    }
+                });
         createGoogleApiClient();
     }
 

@@ -2,6 +2,7 @@ package ss12.com.lightsout;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.speech.RecognizerIntent;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.MessageApi;
@@ -85,8 +88,14 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.text);
-
+                button= (Button) stub.findViewById(R.id.refresh);
                 compare = (TextView) stub.findViewById(R.id.compare);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        displaySpeechRecognizer();
+                    }
+                });
                 viewDone = true;
             }
         });
@@ -96,7 +105,6 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         //register sensors
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        bpmS = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
         createGoogleApiClient();
 
         //create random number generator
@@ -134,7 +142,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         final String message = messageEvent.getPath();
-        final int expectedAction = Integer.parseInt(message);
+       final int expectedAction = Integer.parseInt(message);
         if (expectedAction == 9) {
             timeLimit = 4000;
         } else{
@@ -199,7 +207,9 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(ConnectionResult result) {
-                        Log.d(TAG, "onConnectionFailed: " + result);
+
+                        Log.d(TAG, "onConnectionFailed: " + GooglePlayServicesUtil.GOOGLE_PLAY_SERVICES_VERSION_CODE+" so "+ result);
+                        Toast.makeText(getApplicationContext(),"Api client failed: ", Toast.LENGTH_LONG).show();
                     }
                 })
                         // adding only the wearable API
@@ -326,7 +336,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 vibrator.vibrate(new long[]{0, 400, 0, 0, 0, 0, 400, 0 , 0, 0, 0, 500}, -1);
                 break;
             case 2: //push
-                vibrator.vibrate(new long[]{0, 400, 0, 0, 0, 0, 400,0 , 0, 0, 0, 400, 0 , 0 , 0, 500}, -1);
+                vibrator.vibrate(new long[]{0, 400, 0, 0, 0, 0, 400, 0, 0, 0, 0, 400, 0, 0, 0, 500}, -1);
                 break;
             default:
                 break;
@@ -351,7 +361,52 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 break;
         }
     }
+    private static final int SPEECH_REQUEST_CODE = 0;
+
+    // Create an intent that can start the Speech Recognizer activity
+    private void displaySpeechRecognizer() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+// Start the activity, the intent will be populated with the speech text
+        startActivityForResult(intent, SPEECH_REQUEST_CODE);
+    }
+    // This callback is invoked when the Speech Recognizer returns.
+// This is where you process the intent and extract the speech text from the intent.
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(
+                    RecognizerIntent.EXTRA_RESULTS);
+            String spokenText = results.get(0);
+            // Do something with spokenText
+            Toast.makeText(getApplicationContext(), spokenText, Toast.LENGTH_SHORT).show();
+            speechToAction(spokenText);
 
 
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void speechToAction(String actionType)
+    {
+        String x;
+        switch (actionType)
+        {
+            case "start match":
+                x = "4";
+                Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
+                break;
+            case "ready to fight":
+                x = "5";
+                Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
+                break;
+            default:
+                x = "99";
+                Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
+                break;
+        }
+    }
 
 }
