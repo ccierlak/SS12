@@ -108,15 +108,9 @@ public void onCreate(Bundle savedInstanceState) {
 
 @Override
 public void onClick(View v) {
-        Intent intent;
+    Intent intent;
 
         switch (v.getId()) {
-        case R.id.button_single_player:
-        case R.id.button_single_player_2:
-        // play a single-player game
-        resetGameVars();
-        startGame(false);
-        break;
         case R.id.button_sign_in:
         // user wants to sign in
         // Check to see the developer who's running this sample code read the instructions :-)
@@ -162,10 +156,7 @@ public void onClick(View v) {
         // user wants to play against a random opponent right now
         startQuickGame();
         break;
-        case R.id.button_click_me:
-        // (gameplay) user clicked the "click me" button
-        scoreOnePoint();
-        break;
+
         }
         }
 
@@ -643,11 +634,6 @@ public void run() {
         ((TextView) findViewById(R.id.countdown)).setText("0:" +
         (mSecondsLeft < 10 ? "0" : "") + String.valueOf(mSecondsLeft));
 
-        if (mSecondsLeft <= 0) {
-        // finish game
-        findViewById(R.id.button_click_me).setVisibility(View.GONE);
-        broadcastScore(true);
-        }
         }
 
         // indicates the player scored one point
@@ -751,8 +737,7 @@ public void onRealTimeMessageReceived(RealTimeMessage rtm) {
 final static int[] CLICKABLES = {
         R.id.button_accept_popup_invitation, R.id.button_invite_players,
         R.id.button_quick_game, R.id.button_see_invitations, R.id.button_sign_in,
-        R.id.button_sign_out, R.id.button_click_me, R.id.button_single_player,
-        R.id.button_single_player_2
+        R.id.button_sign_out
         };
 
 // This array lists all the individual screens our game has.

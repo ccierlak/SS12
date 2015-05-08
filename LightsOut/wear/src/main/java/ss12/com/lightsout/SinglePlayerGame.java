@@ -2,7 +2,6 @@ package ss12.com.lightsout;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
-import android.speech.RecognizerIntent;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
@@ -22,14 +20,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class SinglePlayerGame extends Activity implements MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks, SensorEventListener {
@@ -53,23 +55,25 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     //sensor variables
     private SensorManager sensorManager;
     private Sensor accel;
+    private Sensor bpmS;
     private float[] dataArray = new float[3];
 
     //max readings for the accelerometer per round
-    private double xMaxAccel=0,yMaxAccel=0,zMaxAccel=0;
+    private double xMaxAccel = 0, yMaxAccel = 0, zMaxAccel = 0;
 
-    boolean viewDone=false;
+    boolean viewDone = false;
 
     //Time limit implemented through Handler
     static private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-                //this triggers after a certain amount of time has passed defined by timeLimit
-            Log.d("wear message handler","delay message received");
-                ((SinglePlayerGame) msg.obj).endRound(msg.what);
+            //this triggers after a certain amount of time has passed defined by timeLimit
+            Log.d("wear message handler", "delay message received");
+            ((SinglePlayerGame) msg.obj).endRound(msg.what);
         }
     };
+
 
     //OVERRIDE METHODS
     @Override
@@ -81,18 +85,9 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.text);
-                button = (Button) stub.findViewById(R.id.refresh);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        xMaxAccel=0;
-                        yMaxAccel=0;
-                        zMaxAccel=0;
-                        displaySpeechRecognizer();
-                    }
-                });
+
                 compare = (TextView) stub.findViewById(R.id.compare);
-                viewDone=true;
+                viewDone = true;
             }
         });
         //keep screen active on wearable
@@ -101,13 +96,13 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         //register sensors
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        bpmS = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
         createGoogleApiClient();
 
         //create random number generator
         rand = new Random();
 
-        vibrator =  (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-
+        vibrator = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
 
 
     }
@@ -119,14 +114,15 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     }
 
 
-
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "onConnected: " + bundle);
-        Wearable.MessageApi.addListener(mGoogleApiClient,this);
+        Wearable.MessageApi.addListener(mGoogleApiClient, this);
         // now we can use the Message API
         //assigns nodeId
         retrieveDeviceNode();
+
+
     }
 
     @Override
@@ -138,7 +134,10 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         final String message = messageEvent.getPath();
-         final int expectedAction = Integer.parseInt(message);
+        final int expectedAction = Integer.parseInt(message);
+        if (expectedAction == 9) {
+            timeLimit = 4000;
+        } else{
         respond(expectedAction);
         runOnUiThread(new Runnable() {
             @Override
@@ -149,6 +148,8 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
             }
         });
     }
+
+}
 
     @Override
     protected void onStop() {
@@ -254,7 +255,6 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
     private void endRound(int expectedAction){
 
         int actualAction=compareAxes();
-
         //reset maxes
         xMaxAccel=0;
         yMaxAccel=0;
@@ -268,29 +268,14 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
         Log.d(TAG,"actual :"+actualAction+"\texpected: "+expectedAction);
         if(actualAction==expectedAction){
             //win detected
-<<<<<<< HEAD
             //send message back to phone, 9 signifies win
             Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,"9",null);
-=======
-            //send message back to phone, 1 signifies win
-            Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,"1",null);
-
->>>>>>> 0ad7010e41891bf347e152f6ea0682e9298a5fa6
         }else{
             //loss detected
             //send message back to phone with possible error code
             Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,actualAction+"",null);
         }
-        if(actualAction==expectedAction){
-            //win detected
-            //send message back to phone, 1 signifies win
-            vibrator.vibrate(new long[] { 0, 2000, 0 }, -1);
 
-        }else{
-            //loss detected
-            //send message back to phone, 0 signifies loss
-            vibrator.vibrate(new long[] { 0, 200, 0, 200, 0 , 200 ,  }, -1);
-        }
     }
 
     //returns an int representing which of the 3 axes recorded the most activity
@@ -366,52 +351,7 @@ public class SinglePlayerGame extends Activity implements MessageApi.MessageList
                 break;
         }
     }
-    private static final int SPEECH_REQUEST_CODE = 0;
-
-    // Create an intent that can start the Speech Recognizer activity
-    private void displaySpeechRecognizer() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-// Start the activity, the intent will be populated with the speech text
-        startActivityForResult(intent, SPEECH_REQUEST_CODE);
-    }
-
-    // This callback is invoked when the Speech Recognizer returns.
-// This is where you process the intent and extract the speech text from the intent.
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            List<String> results = data.getStringArrayListExtra(
-                    RecognizerIntent.EXTRA_RESULTS);
-            String spokenText = results.get(0);
-            // Do something with spokenText
-            Toast.makeText(getApplicationContext(), spokenText, Toast.LENGTH_SHORT).show();
-            speechToAction(spokenText);
 
 
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
-    public void speechToAction(String actionType)
-    {
-        String x;
-        switch (actionType)
-        {
-            case "start match":
-                x = "4";
-                Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
-                break;
-            case "ready to fight":
-                x = "5";
-                Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
-                break;
-            default:
-                x = "99";
-                Wearable.MessageApi.sendMessage(mGoogleApiClient,nodeId,x,null);
-                break;
-        }
-    }
 }

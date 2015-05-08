@@ -59,15 +59,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"  />
 
-    <Button
-        android:layout_width="190dp"
-        android:layout_height="190dp"
-        android:background="@drawable/boxglove_mirror_custom"
-        android:text="FIT"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        android:id="@+id/fitButton"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/textView"/>
+
 
 </RelativeLayout>

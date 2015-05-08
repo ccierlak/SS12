@@ -28,7 +28,7 @@
         android:textColor="@color/white"
         android:textSize="10sp"
         android:textStyle="bold"
-        android:id="@+id/refresh"
+        android:id="@+id/bpm"
         android:layout_below="@+id/compare"
         android:layout_centerHorizontal="true" />
 />
